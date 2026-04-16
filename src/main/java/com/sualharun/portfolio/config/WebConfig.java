@@ -9,13 +9,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOriginPatterns(
-                    "http://localhost:*",         // Local dev/prod ports
-                    "https://*.vercel.app",       // Vercel preview & production
-                    "https://sualharun.com",      // Custom domain
-                    "https://www.sualharun.com"   // Custom domain with www
-                )
+                .allowedOriginPatterns("*")
+                .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "OPTIONS")
-                .allowCredentials(true);
+                .allowCredentials(false);
     }
 }
