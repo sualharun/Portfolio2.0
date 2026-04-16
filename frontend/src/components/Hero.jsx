@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 export default function Hero() {
   const heroRef = useRef(null);
   const videoRef = useRef(null);
+  const extraScrollRef = useRef(0);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [introUnlocked, setIntroUnlocked] = useState(false);
@@ -50,26 +51,30 @@ export default function Hero() {
       // Lock page scrolling while the intro animation is unfinished.
       event.preventDefault();
 
-      if (progress >= 1) return;
-
-      if (event.deltaY > 0) {
+      if (progress < 1 && event.deltaY > 0) {
         const delta = Math.min(0.22, Math.abs(event.deltaY) / 420);
         setProgress((prev) => Math.min(1, prev + delta));
+        return;
+      }
+
+      // After the video completes, require extra downward scroll input
+      // before unlocking to create a smoother handoff into the page.
+      if (progress >= 1 && event.deltaY > 0) {
+        const unlockThreshold = window.innerWidth <= 560 ? 520 : 760;
+        extraScrollRef.current += Math.abs(event.deltaY);
+        if (extraScrollRef.current >= unlockThreshold) {
+          setIntroUnlocked(true);
+          setProgress(1);
+          extraScrollRef.current = 0;
+          const nudge = Math.max(120, Math.round(window.innerHeight * 0.18));
+          window.scrollBy({ top: nudge, behavior: 'smooth' });
+        }
       }
     };
 
     window.addEventListener('wheel', onWheel, { passive: false });
     return () => window.removeEventListener('wheel', onWheel);
   }, [introUnlocked, progress]);
-
-  const showContinue = !introUnlocked && progress >= 1;
-
-  const handleContinue = () => {
-    setIntroUnlocked(true);
-    setProgress(1);
-    const nudge = Math.max(120, Math.round(window.innerHeight * 0.22));
-    window.scrollBy({ top: nudge, behavior: 'smooth' });
-  };
 
   return (
     <header id="home" ref={heroRef} className="hero">
@@ -84,11 +89,6 @@ export default function Hero() {
           <source src="/assets/Transition-web.mp4" type="video/mp4" />
         </video>
       </div>
-      {showContinue && (
-        <button type="button" className="hero-continue" onClick={handleContinue}>
-          Continue
-        </button>
-      )}
     </header>
   );
 }
