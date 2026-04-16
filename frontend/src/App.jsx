@@ -13,7 +13,7 @@ import Contact from './components/Contact.jsx';
 import Footer from './components/Footer.jsx';
 import useScrollReveal from './hooks/useScrollReveal.js';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio2-0-c31i.onrender.com';
 
 async function getJson(url) {
   const fullUrl = url.startsWith('http') ? url : `${API_URL}${url}`;

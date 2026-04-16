@@ -12,7 +12,7 @@ export default function Contact() {
     setSending(true);
     setStatus({ text: 'Sending...', cls: '' });
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio2-0-c31i.onrender.com';
       const r = await fetch(`${API_URL}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
