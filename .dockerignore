@@ -1,0 +1,16 @@
+.git
+.gitignore
+.vscode
+.idea
+
+target
+node_modules
+frontend/node_modules
+frontend/dist
+
+assets
+frontend/public/assets/Transition-web.mp4
+frontend/public/assets/Transisiton.mov
+
+README.md
+.vercel-deployment.md
