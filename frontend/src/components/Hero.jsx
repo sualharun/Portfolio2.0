@@ -5,7 +5,7 @@ export default function Hero() {
   const videoRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-  const lastDownInputRef = useRef(0);
+  const [introUnlocked, setIntroUnlocked] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -37,60 +37,39 @@ export default function Hero() {
   }, [progress, duration]);
 
   useEffect(() => {
+    if (introUnlocked) return undefined;
+
     const onWheel = (event) => {
       const hero = heroRef.current;
       if (!hero) return;
 
       const rect = hero.getBoundingClientRect();
-      const heroIsActive = rect.top <= 96 && rect.bottom > window.innerHeight * 0.4;
+      const heroIsActive = rect.top <= 96 && rect.bottom >= window.innerHeight * 0.6;
       if (!heroIsActive) return;
 
-      const scrollingDown = event.deltaY > 0;
-      const scrollingUp = event.deltaY < 0;
+      // Lock page scrolling while the intro animation is unfinished.
+      event.preventDefault();
 
-      if ((scrollingDown && progress < 1) || (scrollingUp && progress > 0)) {
-        event.preventDefault();
-        const delta = Math.min(0.25, Math.abs(event.deltaY) / 400);
-        if (scrollingDown) lastDownInputRef.current = performance.now();
-        setProgress((prev) => {
-          if (scrollingDown) return Math.min(1, prev + delta);
-          return Math.max(0, prev - delta);
-        });
+      if (progress >= 1) return;
+
+      if (event.deltaY > 0) {
+        const delta = Math.min(0.22, Math.abs(event.deltaY) / 420);
+        setProgress((prev) => Math.min(1, prev + delta));
       }
     };
 
     window.addEventListener('wheel', onWheel, { passive: false });
     return () => window.removeEventListener('wheel', onWheel);
-  }, [progress]);
+  }, [introUnlocked, progress]);
 
-  // Safety net: after any downward wheel input, keep advancing progress toward 1
-  // so fast scrollers reliably see the animation complete.
-  useEffect(() => {
-    let raf;
-    let prevTs = 0;
-    const CATCHUP_WINDOW_MS = 1200;
-    const COMPLETE_IN_SEC = 1.0;
+  const showContinue = !introUnlocked && progress >= 1;
 
-    const tick = (ts) => {
-      const dt = prevTs ? (ts - prevTs) / 1000 : 0;
-      prevTs = ts;
-
-      const sinceInput = performance.now() - lastDownInputRef.current;
-      if (
-        lastDownInputRef.current &&
-        sinceInput < CATCHUP_WINDOW_MS
-      ) {
-        setProgress((prev) => {
-          if (prev >= 1) return 1;
-          return Math.min(1, prev + dt / COMPLETE_IN_SEC);
-        });
-      }
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, []);
+  const handleContinue = () => {
+    setIntroUnlocked(true);
+    setProgress(1);
+    const nudge = Math.max(120, Math.round(window.innerHeight * 0.22));
+    window.scrollBy({ top: nudge, behavior: 'smooth' });
+  };
 
   return (
     <header id="home" ref={heroRef} className="hero">
@@ -105,6 +84,11 @@ export default function Hero() {
           <source src="/assets/Transition-web.mp4" type="video/mp4" />
         </video>
       </div>
+      {showContinue && (
+        <button type="button" className="hero-continue" onClick={handleContinue}>
+          Continue
+        </button>
+      )}
     </header>
   );
 }

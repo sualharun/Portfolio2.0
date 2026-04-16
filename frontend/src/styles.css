@@ -92,8 +92,41 @@ ul { list-style: none; }
   object-position: 48% 46%;
   transform: scale(1.10);
 }
+.hero-continue {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  padding: 12px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: rgba(10, 10, 10, 0.72);
+  color: var(--white);
+  font-family: var(--body);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.hero-continue:hover {
+  background: rgba(255, 69, 0, 0.9);
+  border-color: var(--orange);
+  transform: translate(-50%, -50%) translateY(-1px);
+}
+.hero-continue:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+}
 @media (max-width: 560px) {
   .hero { height: calc(100dvh + 62px); }
+  .hero-continue {
+    padding: 11px 24px;
+    font-size: 11px;
+    letter-spacing: 1.6px;
+  }
 }
 /* ============== BUTTONS ============== */
 .btn {
