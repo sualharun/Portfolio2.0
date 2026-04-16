@@ -29,5 +29,4 @@ data/
 *.avi
 *.mkv
 *.webm
-assets/
-frontend/public/assets/
+/assets/
