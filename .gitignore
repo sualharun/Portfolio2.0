@@ -1,0 +1,33 @@
+# Build
+target/
+*.jar
+*.class
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.iml
+.DS_Store
+
+# Dependencies
+node_modules/
+frontend/dist/
+frontend/node_modules/
+
+# Database
+data/
+*.db
+
+# Env
+.env
+.env.local
+
+# Large media files (GitHub limit: 100MB)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+assets/
+frontend/public/assets/
